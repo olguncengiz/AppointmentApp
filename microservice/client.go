@@ -27,13 +27,13 @@ func main() {
 	c := pb.NewAppointmentClient(conn)
 
 	// Contact the server and print out its response.
-	name := defaultName
+	rName := defaultName
 	rDate := defaultDate
 	rTime := defaultTime
 	rStatus := defaultStatus
 
 	if len(os.Args) > 1 {
-		name = os.Args[1]
+		rName = os.Args[1]
 	}
 	if len(os.Args) > 2 {
 		rDate = os.Args[2]
@@ -44,8 +44,9 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	appInf := &pb.AppointmentInfo{ClientName: name, Date: rDate, Time: rTime, Status: rStatus}
-	r, err := c.RequestAppointment(ctx, &pb.AppointmentReq{AppInfo: appInf})
+	clientInfo := &pb.ClientInfo{Name: rName}
+	appInfo := &pb.AppointmentInfo{Client: clientInfo, Date: rDate, Time: rTime, Status: rStatus}
+	r, err := c.RequestAppointment(ctx, &pb.AppointmentReq{AppInfo: appInfo})
 	if err != nil {
 		log.Fatalf("could not request appointment: %v", err)
 	}
