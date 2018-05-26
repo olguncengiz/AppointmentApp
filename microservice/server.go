@@ -33,7 +33,7 @@ func (s *server) RequestAppointment(ctx context.Context, in *pb.AppointmentReq) 
 	if !chk || appInfo.Status != "a" {
 		mutex.Lock()
 		// This value can be increased to see mutex is working well
-		time.Sleep(time.Millisecond * 2000)
+		time.Sleep(time.Millisecond)
 		appointmentDb[clientName] = *in.AppInfo
 		mutex.Unlock()
 		
@@ -80,7 +80,7 @@ func (s *server) DeleteAppointment(ctx context.Context, in *pb.ClientInfo) (*pb.
 	if chk {
 		mutex.Lock()
 		// This value can be increased to see mutex is working well
-		time.Sleep(time.Millisecond * 2000)
+		time.Sleep(time.Millisecond)
 		delete(appointmentDb, clientName)
 		mutex.Unlock()
 		

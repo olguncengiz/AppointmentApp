@@ -100,6 +100,36 @@ func appointmentDeleteHandler(response http.ResponseWriter, request *http.Reques
   http.Redirect(response, request, redirectTarget, 302)
 }
 
+// Appointment Approve Handler
+func appointmentApproveHandler(response http.ResponseWriter, request *http.Request) {
+  rName := request.FormValue("username")
+  
+  redirectTarget := "/adminPanel"
+  
+  if rName != ""{
+    // Set up a connection to the server.
+    conn, err := grpc.Dial(address, grpc.WithInsecure())
+    if err != nil {
+      log.Fatalf("did not connect: %v", err)
+    }
+    defer conn.Close()
+    c := pb.NewAppointmentClient(conn)
+
+    // Contact the server and print out its response.
+    //clientDeadline := time.Now().Add(3000)
+    //ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
+    ctx, cancel := context.WithTimeout(context.Background(), time.Second * 10)
+    defer cancel()
+
+    r, err := c.ApproveAppointment(ctx, &pb.ClientInfo{Name: rName})
+    if err != nil {
+      log.Fatalf("could not approve appointment: %v", err)
+    }
+    log.Printf("Reply: %s", r.Message)
+  }
+  http.Redirect(response, request, redirectTarget, 302)
+}
+
 // Appointment Request Handler
 func appointmentRequestHandler(response http.ResponseWriter, request *http.Request) {
   rName := request.FormValue("username")
@@ -127,6 +157,39 @@ func appointmentRequestHandler(response http.ResponseWriter, request *http.Reque
     r, err := c.RequestAppointment(ctx, &pb.AppointmentReq{AppInfo: appInfo})
     if err != nil {
       log.Fatalf("could not request appointment: %v", err)
+    }
+    log.Printf("Reply: %s", r.Message)
+  }
+  http.Redirect(response, request, redirectTarget, 302)
+}
+
+// Appointment Move Handler
+func appointmentMoveHandler(response http.ResponseWriter, request *http.Request) {
+  rName := request.FormValue("username")
+  rDate := request.FormValue("date")
+  rTime := request.FormValue("time")
+  rStatus := "a"
+  redirectTarget := "/adminPanel"
+  
+  if rName != "" && rDate != "" && rTime != "" {
+    // Set up a connection to the server.
+    conn, err := grpc.Dial(address, grpc.WithInsecure())
+    if err != nil {
+      log.Fatalf("did not connect: %v", err)
+    }
+    defer conn.Close()
+    c := pb.NewAppointmentClient(conn)
+
+    // Contact the server and print out its response.
+    //clientDeadline := time.Now().Add(time.Duration(10) * time.Second)
+    //ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
+    ctx, cancel := context.WithTimeout(context.Background(), time.Second * 10)
+    defer cancel()
+    clientInfo := &pb.ClientInfo{Name: rName}
+    appInfo := &pb.AppointmentInfo{Client: clientInfo, Date: rDate, Time: rTime, Status: rStatus}
+    r, err := c.MoveAppointment(ctx, &pb.AppointmentReq{AppInfo: appInfo})
+    if err != nil {
+      log.Fatalf("could not move appointment: %v", err)
     }
     log.Printf("Reply: %s", r.Message)
   }
@@ -200,6 +263,7 @@ const userPanel = `
 <hr>
 <small>User: %s</small>
 <div>
+<b>Request Appointment</b>
 <form method="post" action="/requestAppointment">
     <label for="username">User name</label>
     <input type="text" id="username" name="username">
@@ -210,6 +274,7 @@ const userPanel = `
     <button type="submit">Request</button>
 </form>
 </div>
+<br>
 <form method="post" action="/logout">
     <button type="submit">Logout</button>
 </form>
@@ -221,12 +286,37 @@ const adminPanel = `
 <hr>
 <small>User: %s</small>
 <div>
+<b>Delete Appointment</b>
 <form method="post" action="/deleteAppointment">
     <label for="username">User name</label>
     <input type="text" id="username" name="username">
     <button type="submit">Delete</button>
 </form>
 </div>
+<br>
+<div>
+<b>Approve Appointment</b>
+<form method="post" action="/approveAppointment">
+    <label for="username">User name</label>
+    <input type="text" id="username" name="username">
+    <button type="submit">Approve</button>
+</form>
+</div>
+<br>
+<div>
+<div>
+<b>Move Appointment</b>
+<form method="post" action="/moveAppointment">
+    <label for="username">User name</label>
+    <input type="text" id="username" name="username">
+    <label for="date">New Date</label>
+    <input type="date" id="date" name="date">
+    <label for="time">New Time</label>
+    <input type="time" id="time" name="time">
+    <button type="submit">Move</button>
+</form>
+</div>
+<br>
 <form method="post" action="/logout">
     <button type="submit">Logout</button>
 </form>
@@ -264,6 +354,8 @@ func main() {
   router.HandleFunc("/logout", logoutHandler).Methods("POST")
   router.HandleFunc("/requestAppointment", appointmentRequestHandler).Methods("POST")
   router.HandleFunc("/deleteAppointment", appointmentDeleteHandler).Methods("POST")
+  router.HandleFunc("/approveAppointment", appointmentApproveHandler).Methods("POST")
+  router.HandleFunc("/moveAppointment", appointmentMoveHandler).Methods("POST")
 
   http.Handle("/", router)
   http.ListenAndServe(":8080", nil)
