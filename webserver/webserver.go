@@ -2,9 +2,14 @@ package main
 
 import (
   "fmt"
+  "log"
   "github.com/gorilla/mux"
   "github.com/gorilla/securecookie"
   "net/http"
+  "time"
+  "golang.org/x/net/context"
+  "google.golang.org/grpc"
+  pb "github.com/olguncengiz/AppointmentApp/microservice/appointment"
 )
 
 // Cookie Handling
@@ -55,6 +60,42 @@ func authenticateUser(username string, password string) string {
     role = "admin"
   }
   return role
+}
+
+const (
+  address     = "localhost:50888"
+  defaultName = "world"
+  defaultDate = "2018-05-26"
+  defaultTime = "13:00"
+  defaultStatus = "r"
+)
+
+// Appointment Request Handler
+func appointmentRequestHandler(response http.ResponseWriter, request *http.Request) {
+  rName := request.FormValue("username")
+  rDate := request.FormValue("date")
+  rTime := request.FormValue("time")
+  rStatus := "r"
+  redirectTarget := "/userPanel"
+  
+  // Set up a connection to the server.
+  conn, err := grpc.Dial(address, grpc.WithInsecure())
+  if err != nil {
+    log.Fatalf("did not connect: %v", err)
+  }
+  defer conn.Close()
+  c := pb.NewAppointmentClient(conn)
+
+  // Contact the server and print out its response.
+  ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+  defer cancel()
+  appInf := &pb.AppointmentInfo{ClientName: rName, Date: rDate, Time: rTime, Status: rStatus}
+  r, err := c.RequestAppointment(ctx, &pb.AppointmentReq{AppInfo: appInf})
+  if err != nil {
+    log.Fatalf("could not request appointment: %v", err)
+  }
+  log.Printf("Reply: %s", r.Message)
+  http.Redirect(response, request, redirectTarget, 302)
 }
 
 // Login Handler
@@ -123,7 +164,17 @@ const userPanel = `
 <h1>User Panel</h1>
 <hr>
 <small>User: %s</small>
-<div>Appointment Request Will Come Here...</div>
+<div>
+<form method="post" action="/requestAppointment">
+    <label for="username">User name</label>
+    <input type="text" id="username" name="username">
+    <label for="date">Date</label>
+    <input type="date" id="date" name="date">
+    <label for="time">Time</label>
+    <input type="time" id="time" name="time">
+    <button type="submit">Request</button>
+</form>
+</div>
 <form method="post" action="/logout">
     <button type="submit">Logout</button>
 </form>
@@ -149,6 +200,7 @@ func main() {
 
   router.HandleFunc("/login", loginHandler).Methods("POST")
   router.HandleFunc("/logout", logoutHandler).Methods("POST")
+  router.HandleFunc("/requestAppointment", appointmentRequestHandler).Methods("POST")
 
   http.Handle("/", router)
   http.ListenAndServe(":8080", nil)

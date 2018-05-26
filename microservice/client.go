@@ -12,8 +12,8 @@ import (
 const (
 	address     = "localhost:50888"
 	defaultName = "world"
-	defaultDate = "2018"
-	defaultTime = "19:00"
+	defaultDate = "2018-05-26"
+	defaultTime = "13:00"
 	defaultStatus = "r"
 )
 
