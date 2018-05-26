@@ -19,21 +19,21 @@ const (
 type server struct{}
 
 //var globalName []pb.AppointmentInfo = make([]pb.AppointmentInfo, 0)
+var mutex = &sync.Mutex{}
 var appointmentDb = make(map[string]pb.AppointmentInfo)
 
 // RequestAppointment implements appointment.RequestAppointment
 func (s *server) RequestAppointment(ctx context.Context, in *pb.AppointmentReq) (*pb.AppointmentRep, error) {
-	clientName := in.AppInfo.ClientName
+	clientName := in.AppInfo.Client.Name
 
+	mutex.Lock()
 	appInfo, chk := appointmentDb[clientName]
-	if !chk || appInfo.Status != "a" {
-		var mutex = &sync.Mutex{}
-		
-		mutex.Lock()
-		
-		// This value can be increased to see mutex is working well
-		time.Sleep(time.Millisecond)
+	mutex.Unlock()
 
+	if !chk || appInfo.Status != "a" {
+		mutex.Lock()
+		// This value can be increased to see mutex is working well
+		time.Sleep(time.Millisecond * 2000)
 		appointmentDb[clientName] = *in.AppInfo
 		mutex.Unlock()
 		
@@ -45,25 +45,74 @@ func (s *server) RequestAppointment(ctx context.Context, in *pb.AppointmentReq) 
 	}
 }
 
-// DeleteAppointment implements appointment.DeleteAppointment
-func (s *server) DeleteAppointment(ctx context.Context, in *pb.ClientName) (*pb.AppointmentRep, error) {
-	clientName := in.ClientName
+// MoveAppointment implements appointment.MoveAppointment
+func (s *server) MoveAppointment(ctx context.Context, in *pb.AppointmentReq) (*pb.AppointmentRep, error) {
+	clientName := in.AppInfo.Client.Name
 
+	mutex.Lock()
 	_, chk := appointmentDb[clientName]
-	if chk {
-		var mutex = &sync.Mutex{}
-		
-		mutex.Lock()
-		
+	mutex.Unlock()
+
+	if chk {		
 		// This value can be increased to see mutex is working well
 		time.Sleep(time.Millisecond)
 
+		mutex.Lock()
+		appointmentDb[clientName] = *in.AppInfo
+		mutex.Unlock()
+		
+		log.Printf("DB: %s", appointmentDb)
+
+		return &pb.AppointmentRep{Message: "Appointment Moved For " + clientName}, nil
+	} else {
+		return &pb.AppointmentRep{Message: clientName + " Doesn't Have An Appointment"}, nil
+	}
+}
+
+// DeleteAppointment implements appointment.DeleteAppointment
+func (s *server) DeleteAppointment(ctx context.Context, in *pb.ClientInfo) (*pb.AppointmentRep, error) {
+	clientName := in.Name
+
+	mutex.Lock()
+	_, chk := appointmentDb[clientName]
+	mutex.Unlock()
+
+	if chk {
+		mutex.Lock()
+		// This value can be increased to see mutex is working well
+		time.Sleep(time.Millisecond * 2000)
 		delete(appointmentDb, clientName)
 		mutex.Unlock()
 		
 		log.Printf("DB: %s", appointmentDb)
 
 		return &pb.AppointmentRep{Message: "Appointment Deleted For " + clientName}, nil
+	} else {
+		return &pb.AppointmentRep{Message: clientName + " Doesn't Have An Appointment"}, nil
+	}
+}
+
+// ApproveAppointment implements appointment.ApproveAppointment
+func (s *server) ApproveAppointment(ctx context.Context, in *pb.ClientInfo) (*pb.AppointmentRep, error) {
+	clientName := in.Name
+
+	mutex.Lock()
+	appInfo, chk := appointmentDb[clientName]
+	mutex.Unlock()
+
+	if chk {		
+		// This value can be increased to see mutex is working well
+		time.Sleep(time.Millisecond)
+
+		appInfo.Status = "a"
+
+		mutex.Lock()
+		appointmentDb[clientName] = appInfo
+		mutex.Unlock()
+		
+		log.Printf("DB: %s", appointmentDb)
+
+		return &pb.AppointmentRep{Message: "Appointment Approved For " + clientName}, nil
 	} else {
 		return &pb.AppointmentRep{Message: clientName + " Doesn't Have An Appointment"}, nil
 	}

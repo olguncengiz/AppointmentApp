@@ -88,10 +88,10 @@ func appointmentDeleteHandler(response http.ResponseWriter, request *http.Reques
     // Contact the server and print out its response.
     //clientDeadline := time.Now().Add(3000)
     //ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
-    ctx, cancel := context.WithTimeout(context.Background(), time.Second * 3)
+    ctx, cancel := context.WithTimeout(context.Background(), time.Second * 10)
     defer cancel()
 
-    r, err := c.DeleteAppointment(ctx, &pb.ClientName{ClientName: rName})
+    r, err := c.DeleteAppointment(ctx, &pb.ClientInfo{Name: rName})
     if err != nil {
       log.Fatalf("could not delete appointment: %v", err)
     }
@@ -118,12 +118,13 @@ func appointmentRequestHandler(response http.ResponseWriter, request *http.Reque
     c := pb.NewAppointmentClient(conn)
 
     // Contact the server and print out its response.
-    //clientDeadline := time.Now().Add(3000)
+    //clientDeadline := time.Now().Add(time.Duration(10) * time.Second)
     //ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
-    ctx, cancel := context.WithTimeout(context.Background(), time.Second * 3)
+    ctx, cancel := context.WithTimeout(context.Background(), time.Second * 10)
     defer cancel()
-    appInf := &pb.AppointmentInfo{ClientName: rName, Date: rDate, Time: rTime, Status: rStatus}
-    r, err := c.RequestAppointment(ctx, &pb.AppointmentReq{AppInfo: appInf})
+    clientInfo := &pb.ClientInfo{Name: rName}
+    appInfo := &pb.AppointmentInfo{Client: clientInfo, Date: rDate, Time: rTime, Status: rStatus}
+    r, err := c.RequestAppointment(ctx, &pb.AppointmentReq{AppInfo: appInfo})
     if err != nil {
       log.Fatalf("could not request appointment: %v", err)
     }
@@ -146,7 +147,7 @@ func loginHandler(response http.ResponseWriter, request *http.Request) {
       redirectTarget = "/userPanel"
     } else if userRole == "admin" {
       setSession(name, response)
-      redirectTarget = "/internal"
+      redirectTarget = "/adminPanel"
     }
   }
   http.Redirect(response, request, redirectTarget, 302)

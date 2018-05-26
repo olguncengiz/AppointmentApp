@@ -23,45 +23,6 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-// The request message containing the user's name.
-type ClientName struct {
-	ClientName           string   `protobuf:"bytes,1,opt,name=clientName" json:"clientName,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *ClientName) Reset()         { *m = ClientName{} }
-func (m *ClientName) String() string { return proto.CompactTextString(m) }
-func (*ClientName) ProtoMessage()    {}
-func (*ClientName) Descriptor() ([]byte, []int) {
-	return fileDescriptor_appointment_f65d4a87dae35d98, []int{0}
-}
-func (m *ClientName) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ClientName.Unmarshal(m, b)
-}
-func (m *ClientName) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ClientName.Marshal(b, m, deterministic)
-}
-func (dst *ClientName) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ClientName.Merge(dst, src)
-}
-func (m *ClientName) XXX_Size() int {
-	return xxx_messageInfo_ClientName.Size(m)
-}
-func (m *ClientName) XXX_DiscardUnknown() {
-	xxx_messageInfo_ClientName.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ClientName proto.InternalMessageInfo
-
-func (m *ClientName) GetClientName() string {
-	if m != nil {
-		return m.ClientName
-	}
-	return ""
-}
-
 type AppointmentReq struct {
 	AppInfo              *AppointmentInfo `protobuf:"bytes,1,opt,name=appInfo" json:"appInfo,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
@@ -73,7 +34,7 @@ func (m *AppointmentReq) Reset()         { *m = AppointmentReq{} }
 func (m *AppointmentReq) String() string { return proto.CompactTextString(m) }
 func (*AppointmentReq) ProtoMessage()    {}
 func (*AppointmentReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_appointment_f65d4a87dae35d98, []int{1}
+	return fileDescriptor_appointment_235306f62f2bc82c, []int{0}
 }
 func (m *AppointmentReq) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AppointmentReq.Unmarshal(m, b)
@@ -111,7 +72,7 @@ func (m *AppointmentRep) Reset()         { *m = AppointmentRep{} }
 func (m *AppointmentRep) String() string { return proto.CompactTextString(m) }
 func (*AppointmentRep) ProtoMessage()    {}
 func (*AppointmentRep) Descriptor() ([]byte, []int) {
-	return fileDescriptor_appointment_f65d4a87dae35d98, []int{2}
+	return fileDescriptor_appointment_235306f62f2bc82c, []int{1}
 }
 func (m *AppointmentRep) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AppointmentRep.Unmarshal(m, b)
@@ -138,21 +99,59 @@ func (m *AppointmentRep) GetMessage() string {
 	return ""
 }
 
-type AppointmentInfo struct {
-	ClientName           string   `protobuf:"bytes,1,opt,name=clientName" json:"clientName,omitempty"`
-	Date                 string   `protobuf:"bytes,2,opt,name=date" json:"date,omitempty"`
-	Time                 string   `protobuf:"bytes,3,opt,name=time" json:"time,omitempty"`
-	Status               string   `protobuf:"bytes,4,opt,name=status" json:"status,omitempty"`
+type ClientInfo struct {
+	Name                 string   `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ClientInfo) Reset()         { *m = ClientInfo{} }
+func (m *ClientInfo) String() string { return proto.CompactTextString(m) }
+func (*ClientInfo) ProtoMessage()    {}
+func (*ClientInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_appointment_235306f62f2bc82c, []int{2}
+}
+func (m *ClientInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ClientInfo.Unmarshal(m, b)
+}
+func (m *ClientInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ClientInfo.Marshal(b, m, deterministic)
+}
+func (dst *ClientInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ClientInfo.Merge(dst, src)
+}
+func (m *ClientInfo) XXX_Size() int {
+	return xxx_messageInfo_ClientInfo.Size(m)
+}
+func (m *ClientInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_ClientInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ClientInfo proto.InternalMessageInfo
+
+func (m *ClientInfo) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+type AppointmentInfo struct {
+	Client               *ClientInfo `protobuf:"bytes,1,opt,name=client" json:"client,omitempty"`
+	Date                 string      `protobuf:"bytes,2,opt,name=date" json:"date,omitempty"`
+	Time                 string      `protobuf:"bytes,3,opt,name=time" json:"time,omitempty"`
+	Status               string      `protobuf:"bytes,4,opt,name=status" json:"status,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
 }
 
 func (m *AppointmentInfo) Reset()         { *m = AppointmentInfo{} }
 func (m *AppointmentInfo) String() string { return proto.CompactTextString(m) }
 func (*AppointmentInfo) ProtoMessage()    {}
 func (*AppointmentInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_appointment_f65d4a87dae35d98, []int{3}
+	return fileDescriptor_appointment_235306f62f2bc82c, []int{3}
 }
 func (m *AppointmentInfo) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AppointmentInfo.Unmarshal(m, b)
@@ -172,11 +171,11 @@ func (m *AppointmentInfo) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_AppointmentInfo proto.InternalMessageInfo
 
-func (m *AppointmentInfo) GetClientName() string {
+func (m *AppointmentInfo) GetClient() *ClientInfo {
 	if m != nil {
-		return m.ClientName
+		return m.Client
 	}
-	return ""
+	return nil
 }
 
 func (m *AppointmentInfo) GetDate() string {
@@ -201,9 +200,9 @@ func (m *AppointmentInfo) GetStatus() string {
 }
 
 func init() {
-	proto.RegisterType((*ClientName)(nil), "appointment.ClientName")
 	proto.RegisterType((*AppointmentReq)(nil), "appointment.AppointmentReq")
 	proto.RegisterType((*AppointmentRep)(nil), "appointment.AppointmentRep")
+	proto.RegisterType((*ClientInfo)(nil), "appointment.ClientInfo")
 	proto.RegisterType((*AppointmentInfo)(nil), "appointment.AppointmentInfo")
 }
 
@@ -220,7 +219,9 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AppointmentClient interface {
 	RequestAppointment(ctx context.Context, in *AppointmentReq, opts ...grpc.CallOption) (*AppointmentRep, error)
-	DeleteAppointment(ctx context.Context, in *ClientName, opts ...grpc.CallOption) (*AppointmentRep, error)
+	DeleteAppointment(ctx context.Context, in *ClientInfo, opts ...grpc.CallOption) (*AppointmentRep, error)
+	ApproveAppointment(ctx context.Context, in *ClientInfo, opts ...grpc.CallOption) (*AppointmentRep, error)
+	MoveAppointment(ctx context.Context, in *AppointmentReq, opts ...grpc.CallOption) (*AppointmentRep, error)
 }
 
 type appointmentClient struct {
@@ -240,9 +241,27 @@ func (c *appointmentClient) RequestAppointment(ctx context.Context, in *Appointm
 	return out, nil
 }
 
-func (c *appointmentClient) DeleteAppointment(ctx context.Context, in *ClientName, opts ...grpc.CallOption) (*AppointmentRep, error) {
+func (c *appointmentClient) DeleteAppointment(ctx context.Context, in *ClientInfo, opts ...grpc.CallOption) (*AppointmentRep, error) {
 	out := new(AppointmentRep)
 	err := c.cc.Invoke(ctx, "/appointment.Appointment/DeleteAppointment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appointmentClient) ApproveAppointment(ctx context.Context, in *ClientInfo, opts ...grpc.CallOption) (*AppointmentRep, error) {
+	out := new(AppointmentRep)
+	err := c.cc.Invoke(ctx, "/appointment.Appointment/ApproveAppointment", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appointmentClient) MoveAppointment(ctx context.Context, in *AppointmentReq, opts ...grpc.CallOption) (*AppointmentRep, error) {
+	out := new(AppointmentRep)
+	err := c.cc.Invoke(ctx, "/appointment.Appointment/MoveAppointment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -252,7 +271,9 @@ func (c *appointmentClient) DeleteAppointment(ctx context.Context, in *ClientNam
 // AppointmentServer is the server API for Appointment service.
 type AppointmentServer interface {
 	RequestAppointment(context.Context, *AppointmentReq) (*AppointmentRep, error)
-	DeleteAppointment(context.Context, *ClientName) (*AppointmentRep, error)
+	DeleteAppointment(context.Context, *ClientInfo) (*AppointmentRep, error)
+	ApproveAppointment(context.Context, *ClientInfo) (*AppointmentRep, error)
+	MoveAppointment(context.Context, *AppointmentReq) (*AppointmentRep, error)
 }
 
 func RegisterAppointmentServer(s *grpc.Server, srv AppointmentServer) {
@@ -278,7 +299,7 @@ func _Appointment_RequestAppointment_Handler(srv interface{}, ctx context.Contex
 }
 
 func _Appointment_DeleteAppointment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ClientName)
+	in := new(ClientInfo)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -290,7 +311,43 @@ func _Appointment_DeleteAppointment_Handler(srv interface{}, ctx context.Context
 		FullMethod: "/appointment.Appointment/DeleteAppointment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AppointmentServer).DeleteAppointment(ctx, req.(*ClientName))
+		return srv.(AppointmentServer).DeleteAppointment(ctx, req.(*ClientInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Appointment_ApproveAppointment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClientInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppointmentServer).ApproveAppointment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/appointment.Appointment/ApproveAppointment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppointmentServer).ApproveAppointment(ctx, req.(*ClientInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Appointment_MoveAppointment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppointmentReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppointmentServer).MoveAppointment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/appointment.Appointment/MoveAppointment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppointmentServer).MoveAppointment(ctx, req.(*AppointmentReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -307,28 +364,38 @@ var _Appointment_serviceDesc = grpc.ServiceDesc{
 			MethodName: "DeleteAppointment",
 			Handler:    _Appointment_DeleteAppointment_Handler,
 		},
+		{
+			MethodName: "ApproveAppointment",
+			Handler:    _Appointment_ApproveAppointment_Handler,
+		},
+		{
+			MethodName: "MoveAppointment",
+			Handler:    _Appointment_MoveAppointment_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "appointment.proto",
 }
 
-func init() { proto.RegisterFile("appointment.proto", fileDescriptor_appointment_f65d4a87dae35d98) }
+func init() { proto.RegisterFile("appointment.proto", fileDescriptor_appointment_235306f62f2bc82c) }
 
-var fileDescriptor_appointment_f65d4a87dae35d98 = []byte{
-	// 236 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x91, 0xcd, 0x4a, 0xc5, 0x30,
-	0x10, 0x85, 0xad, 0x5e, 0xee, 0xc5, 0x29, 0x28, 0x77, 0x16, 0x1a, 0x54, 0x44, 0xb2, 0x12, 0x91,
-	0x2e, 0x2a, 0xb8, 0x17, 0x5d, 0x28, 0x82, 0x48, 0xde, 0x20, 0xea, 0x28, 0x85, 0xe6, 0xcf, 0x4c,
-	0xdf, 0xca, 0x87, 0x94, 0x46, 0x6b, 0x63, 0x41, 0xbb, 0x9b, 0xf9, 0xe6, 0xcc, 0x39, 0x09, 0x03,
-	0x6b, 0xed, 0xbd, 0x6b, 0x2c, 0x1b, 0xb2, 0x5c, 0xf9, 0x77, 0xc7, 0x0e, 0xcb, 0x0c, 0xc9, 0x73,
-	0x80, 0xeb, 0xb6, 0x21, 0xcb, 0x0f, 0xda, 0x10, 0x1e, 0x03, 0x3c, 0xff, 0x74, 0xa2, 0x38, 0x29,
-	0x4e, 0xb7, 0x55, 0x46, 0xe4, 0x2d, 0xec, 0x5c, 0x8d, 0xcb, 0x8a, 0x02, 0x5e, 0xc2, 0x4a, 0x7b,
-	0x7f, 0x67, 0x5f, 0x5d, 0x92, 0x97, 0xf5, 0x51, 0x95, 0x27, 0x66, 0xea, 0x5e, 0xa3, 0x06, 0xb1,
-	0x3c, 0x9b, 0x38, 0x79, 0x14, 0xb0, 0x32, 0x14, 0xa3, 0x7e, 0x1b, 0x82, 0x87, 0x56, 0x06, 0xd8,
-	0x9d, 0xf8, 0xcc, 0x3d, 0x14, 0x11, 0x16, 0x2f, 0x9a, 0x49, 0x6c, 0xa6, 0x49, 0xaa, 0x7b, 0xc6,
-	0x8d, 0x21, 0xb1, 0xf5, 0xc5, 0xfa, 0x1a, 0xf7, 0x60, 0x19, 0x59, 0x73, 0x17, 0xc5, 0x22, 0xd1,
-	0xef, 0xae, 0xfe, 0x28, 0xa0, 0xcc, 0x32, 0xf1, 0x11, 0x50, 0x51, 0xe8, 0x28, 0x72, 0x4e, 0x0f,
-	0xff, 0xfa, 0xab, 0xa2, 0x70, 0xf0, 0xcf, 0xd0, 0xcb, 0x0d, 0xbc, 0x87, 0xf5, 0x0d, 0xb5, 0xc4,
-	0x94, 0x1b, 0xee, 0xff, 0xda, 0x19, 0x0f, 0x33, 0x63, 0xf6, 0xb4, 0x4c, 0x97, 0xbd, 0xf8, 0x0c,
-	0x00, 0x00, 0xff, 0xff, 0xc6, 0x75, 0x3a, 0x95, 0xee, 0x01, 0x00, 0x00,
+var fileDescriptor_appointment_235306f62f2bc82c = []byte{
+	// 267 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x92, 0xc1, 0x4a, 0xc3, 0x40,
+	0x10, 0x86, 0x4d, 0x2d, 0x29, 0x4e, 0xc0, 0xd2, 0x39, 0x68, 0x50, 0x0f, 0x65, 0x4f, 0xe2, 0xa1,
+	0x42, 0x05, 0xef, 0x45, 0x0f, 0x8a, 0x16, 0x64, 0xdf, 0x60, 0xd5, 0x51, 0x02, 0x4d, 0x76, 0xd2,
+	0x9d, 0xfa, 0x00, 0xbe, 0x9d, 0x6f, 0x25, 0xbb, 0x4d, 0xe8, 0x1a, 0xa8, 0x1e, 0xec, 0x6d, 0xfe,
+	0x3f, 0x7f, 0xbe, 0xfd, 0x67, 0x59, 0x18, 0x19, 0x66, 0x5b, 0x54, 0x52, 0x52, 0x25, 0x13, 0x5e,
+	0x5a, 0xb1, 0x98, 0x45, 0x96, 0xba, 0x83, 0xc3, 0xd9, 0x46, 0x6a, 0xaa, 0xf1, 0x1a, 0x06, 0x86,
+	0xf9, 0xbe, 0x7a, 0xb3, 0x79, 0x32, 0x4e, 0xce, 0xb3, 0xe9, 0xd9, 0x24, 0x66, 0x44, 0x69, 0x9f,
+	0xd1, 0x6d, 0x58, 0x5d, 0x74, 0x48, 0x8c, 0x39, 0x0c, 0x4a, 0x72, 0xce, 0xbc, 0x53, 0x20, 0x1d,
+	0xe8, 0x56, 0xaa, 0x31, 0xc0, 0xcd, 0xa2, 0x68, 0x10, 0x88, 0xd0, 0xaf, 0x4c, 0xd9, 0x86, 0xc2,
+	0xac, 0x3e, 0x13, 0x18, 0x76, 0x8e, 0xc2, 0x4b, 0x48, 0x5f, 0xc2, 0x5f, 0x4d, 0xb1, 0xe3, 0x1f,
+	0xc5, 0x36, 0x40, 0xdd, 0xc4, 0x3c, 0xf8, 0xd5, 0x08, 0xe5, 0xbd, 0x35, 0xd8, 0xcf, 0xde, 0x93,
+	0xa2, 0xa4, 0x7c, 0x7f, 0xed, 0xf9, 0x19, 0x8f, 0x20, 0x75, 0x62, 0x64, 0xe5, 0xf2, 0x7e, 0x70,
+	0x1b, 0x35, 0xfd, 0xea, 0x41, 0x16, 0x95, 0xc0, 0x27, 0x40, 0x4d, 0xf5, 0x8a, 0x9c, 0xc4, 0xee,
+	0xe9, 0xb6, 0xfb, 0xd1, 0x54, 0x9f, 0xfc, 0xf2, 0x91, 0xd5, 0x1e, 0x3e, 0xc0, 0xe8, 0x96, 0x16,
+	0x24, 0x14, 0x03, 0xb7, 0xed, 0xf5, 0x17, 0xec, 0x11, 0x70, 0xc6, 0xbc, 0xb4, 0x1f, 0x3b, 0xa1,
+	0xcd, 0x61, 0x38, 0xef, 0xa0, 0xfe, 0xb1, 0xe9, 0x73, 0x1a, 0x1e, 0xdf, 0xd5, 0x77, 0x00, 0x00,
+	0x00, 0xff, 0xff, 0x63, 0xe1, 0x2b, 0x7d, 0x91, 0x02, 0x00, 0x00,
 }
