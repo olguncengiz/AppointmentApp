@@ -78,23 +78,27 @@ func appointmentRequestHandler(response http.ResponseWriter, request *http.Reque
   rStatus := "r"
   redirectTarget := "/userPanel"
   
-  // Set up a connection to the server.
-  conn, err := grpc.Dial(address, grpc.WithInsecure())
-  if err != nil {
-    log.Fatalf("did not connect: %v", err)
-  }
-  defer conn.Close()
-  c := pb.NewAppointmentClient(conn)
+  if rName != "" && rDate != "" && rTime != "" {
+    // Set up a connection to the server.
+    conn, err := grpc.Dial(address, grpc.WithInsecure())
+    if err != nil {
+      log.Fatalf("did not connect: %v", err)
+    }
+    defer conn.Close()
+    c := pb.NewAppointmentClient(conn)
 
-  // Contact the server and print out its response.
-  ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-  defer cancel()
-  appInf := &pb.AppointmentInfo{ClientName: rName, Date: rDate, Time: rTime, Status: rStatus}
-  r, err := c.RequestAppointment(ctx, &pb.AppointmentReq{AppInfo: appInf})
-  if err != nil {
-    log.Fatalf("could not request appointment: %v", err)
+    // Contact the server and print out its response.
+    //clientDeadline := time.Now().Add(3000)
+    //ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
+    ctx, cancel := context.WithTimeout(context.Background(), time.Second * 3)
+    defer cancel()
+    appInf := &pb.AppointmentInfo{ClientName: rName, Date: rDate, Time: rTime, Status: rStatus}
+    r, err := c.RequestAppointment(ctx, &pb.AppointmentReq{AppInfo: appInf})
+    if err != nil {
+      log.Fatalf("could not request appointment: %v", err)
+    }
+    log.Printf("Reply: %s", r.Message)
   }
-  log.Printf("Reply: %s", r.Message)
   http.Redirect(response, request, redirectTarget, 302)
 }
 

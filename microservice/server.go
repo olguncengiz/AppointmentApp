@@ -3,7 +3,8 @@ package main
 import (
 	"log"
 	"net"
-
+	"sync"
+	"time"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	pb "github.com/olguncengiz/AppointmentApp/microservice/appointment"
@@ -23,15 +24,25 @@ var appointmentDb = make(map[string]pb.AppointmentInfo)
 // SayHello implements helloworld.GreeterServer
 func (s *server) RequestAppointment(ctx context.Context, in *pb.AppointmentReq) (*pb.AppointmentRep, error) {
 	clientName := in.AppInfo.ClientName
+	var mutex = &sync.Mutex{}
+	
+	mutex.Lock()
+	time.Sleep(2000 * time.Millisecond)
 	appointmentDb[clientName] = *in.AppInfo
+	mutex.Unlock()
+	
 	log.Printf("DB: %s", appointmentDb)
 
+	/* 
+	------------------------------
 	_, chk := appointmentDb["user1"]
 	if chk {
 		log.Printf("user1 Requested An Appointment")
 	}
+	------------------------------
+	*/ 
 
-	return &pb.AppointmentRep{Message: "Appointment Request Received"}, nil
+	return &pb.AppointmentRep{Message: "Appointment Request Received From " + clientName}, nil
 }
 
 func main() {
