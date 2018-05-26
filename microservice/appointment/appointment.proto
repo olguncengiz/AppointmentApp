@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package appointment;
+
+// The greeting service definition.
+service Appointment {
+  rpc RequestAppointment (AppointmentReq) returns (AppointmentRep) {}
+  rpc DeleteAppointment (string) returns (AppointmentRep) {}
+  rpc ApproveAppointment (string) returns (AppointmentRep) {}
+  rpc MoveAppointment (AppointmentReq) returns (AppointmentRep) {}
+}
+
+// The request message containing the user's name.
+message AppointmentReq {
+  AppointmentInfo appInfo = 1;
+}
+
+message AppointmentRep {
+  string message = 1;
+}
+
+message AppointmentInfo {
+  string clientName = 1;
+  string date = 2;
+  string time = 3;
+  string status = 4;	
+}
