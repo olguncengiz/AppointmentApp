@@ -70,6 +70,36 @@ const (
   defaultStatus = "r"
 )
 
+// Appointment Delete Handler
+func appointmentDeleteHandler(response http.ResponseWriter, request *http.Request) {
+  rName := request.FormValue("username")
+  
+  redirectTarget := "/adminPanel"
+  
+  if rName != ""{
+    // Set up a connection to the server.
+    conn, err := grpc.Dial(address, grpc.WithInsecure())
+    if err != nil {
+      log.Fatalf("did not connect: %v", err)
+    }
+    defer conn.Close()
+    c := pb.NewAppointmentClient(conn)
+
+    // Contact the server and print out its response.
+    //clientDeadline := time.Now().Add(3000)
+    //ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
+    ctx, cancel := context.WithTimeout(context.Background(), time.Second * 3)
+    defer cancel()
+
+    r, err := c.DeleteAppointment(ctx, &pb.ClientName{ClientName: rName})
+    if err != nil {
+      log.Fatalf("could not delete appointment: %v", err)
+    }
+    log.Printf("Reply: %s", r.Message)
+  }
+  http.Redirect(response, request, redirectTarget, 302)
+}
+
 // Appointment Request Handler
 func appointmentRequestHandler(response http.ResponseWriter, request *http.Request) {
   rName := request.FormValue("username")
@@ -184,10 +214,36 @@ const userPanel = `
 </form>
 `
 
+// Admin Panel
+const adminPanel = `
+<h1>Admin Panel</h1>
+<hr>
+<small>User: %s</small>
+<div>
+<form method="post" action="/deleteAppointment">
+    <label for="username">User name</label>
+    <input type="text" id="username" name="username">
+    <button type="submit">Delete</button>
+</form>
+</div>
+<form method="post" action="/logout">
+    <button type="submit">Logout</button>
+</form>
+`
+
 func userPanelHandler(response http.ResponseWriter, request *http.Request) {
   userName := getUserName(request)
   if userName != "" {
     fmt.Fprintf(response, userPanel, userName)
+  } else {
+    http.Redirect(response, request, "/", 302)
+  }
+}
+
+func adminPanelHandler(response http.ResponseWriter, request *http.Request) {
+  userName := getUserName(request)
+  if userName != "" {
+    fmt.Fprintf(response, adminPanel, userName)
   } else {
     http.Redirect(response, request, "/", 302)
   }
@@ -201,10 +257,12 @@ func main() {
   router.HandleFunc("/", indexPageHandler)
   router.HandleFunc("/internal", internalPageHandler)
   router.HandleFunc("/userPanel", userPanelHandler)
+  router.HandleFunc("/adminPanel", adminPanelHandler)
 
   router.HandleFunc("/login", loginHandler).Methods("POST")
   router.HandleFunc("/logout", logoutHandler).Methods("POST")
   router.HandleFunc("/requestAppointment", appointmentRequestHandler).Methods("POST")
+  router.HandleFunc("/deleteAppointment", appointmentDeleteHandler).Methods("POST")
 
   http.Handle("/", router)
   http.ListenAndServe(":8080", nil)

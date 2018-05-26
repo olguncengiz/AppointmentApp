@@ -5,12 +5,16 @@ package appointment;
 // The greeting service definition.
 service Appointment {
   rpc RequestAppointment (AppointmentReq) returns (AppointmentRep) {}
-  rpc DeleteAppointment (string) returns (AppointmentRep) {}
-  rpc ApproveAppointment (string) returns (AppointmentRep) {}
-  rpc MoveAppointment (AppointmentReq) returns (AppointmentRep) {}
+  rpc DeleteAppointment (ClientName) returns (AppointmentRep) {}
+  //rpc ApproveAppointment (ClientName) returns (AppointmentRep) {}
+  //rpc MoveAppointment (AppointmentReq) returns (AppointmentRep) {}
 }
 
 // The request message containing the user's name.
+message ClientName {
+  string clientName = 1;
+}
+
 message AppointmentReq {
   AppointmentInfo appInfo = 1;
 }
