@@ -12,6 +12,7 @@ JS Web Client -> Golang webserver -> Golang gRPC Microservice
   + Username: user1, Password: user, Role: user
   + Username: user2, Password: user, Role: user
   + Username: admin, Password: admin, Role: admin
+- Date and Time information is used as string. So, date format should be YYYY-MM-DD, like 2018-05-29 and time format should be HH:MM, like 15:00
 
 # Learning Curves
 Below are some of the obstacles I had to overcome for this task:
@@ -22,15 +23,10 @@ Below are some of the obstacles I had to overcome for this task:
 - Finding the right command to compile protocol buffer file: 
   + "protoc --go_out=plugins=grpc:. ./*.proto"
 
-# Problems
-Below are the problems I faced during this project:
-- Lost too much time on "protoc" tool error (Couldn't find the .exe file to compile the protocol buffer files)
-- Working with pointers and pointer syntax (* and &) after a long time (since university) is a little confusing
-
 # Used libraries
 - Gorilla MUX
 - Gorilla SecureCookie
-- gRPC
+- gRPC  
 
 # Resources
 Below are online resources I used during this project:
@@ -39,6 +35,19 @@ Below are online resources I used during this project:
 - Golang Syntax and Basics: https://gobyexample.com/
 - Golang Mux Templates: https://github.com/meshhq/golang-html-template-tutorial
 - Golang Mux Templates: https://meshstudio.io/blog/2017-11-06-serving-html-with-golang/
+
+# Problems
+Below are the problems I faced during this project:
+- Lost too much time on "protoc" tool error (Couldn't find the .exe file to compile the protocol buffer files)
+- Working with pointers and pointer syntax (* and &) after a long time (since university) is a little confusing
+- Cross-browser usage can mess the date and time since they are stored as strings
+
+# Future Improvements
+Due to time limitations, below improvement points are left untouched. But these can be considered in future releases:
+- User panel and Admin panel HTMLs are hard-coded in .go files and HTML files are generated from the code. Instead, the templates can be used for flexibility
+- User registration can be added
+- Appointments table is generated in .go file. Instead, AngularJS or similar tool can be used to generate the table
+- CSS files can be used for better user interface and flexibility
 
 # Lessons Learnt
 - You need to be in the same directory with "webserver.go" when executing "go run webserver.go" command if you want Gorilla MUX's server static files option
