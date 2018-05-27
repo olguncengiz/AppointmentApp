@@ -8,12 +8,17 @@ service Appointment {
   rpc DeleteAppointment (ClientInfo) returns (AppointmentRep) {}
   rpc ApproveAppointment (ClientInfo) returns (AppointmentRep) {}
   rpc MoveAppointment (AppointmentReq) returns (AppointmentRep) {}
+  rpc GetAppointments (ClientInfo) returns (AppointmentList) {}
 }
 
 // The request message containing the user's name.
 
 message AppointmentReq {
   AppointmentInfo appInfo = 1;
+}
+
+message AppointmentList {
+  repeated AppointmentInfo appointments = 1;
 }
 
 message AppointmentRep {

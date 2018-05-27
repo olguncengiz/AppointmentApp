@@ -45,6 +45,13 @@ func (s *server) RequestAppointment(ctx context.Context, in *pb.AppointmentReq) 
 	}
 }
 
+// GetAppointments implements appointment.GetAppointments
+func (s *server) GetAppointments(ctx context.Context, in *pb.ClientInfo) (*pb.AppointmentList, error) {
+	appInfo := &pb.AppointmentInfo{Client: nil, Date: "a", Time: "b", Status: "c"}
+	appList := []*pb.AppointmentInfo{appInfo}
+	return &pb.AppointmentList{Appointments: appList}, nil
+}
+
 // MoveAppointment implements appointment.MoveAppointment
 func (s *server) MoveAppointment(ctx context.Context, in *pb.AppointmentReq) (*pb.AppointmentRep, error) {
 	clientName := in.AppInfo.Client.Name
