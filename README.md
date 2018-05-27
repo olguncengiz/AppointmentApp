@@ -30,7 +30,7 @@ Below are some of the obstacles I had to overcome for this task:
 
 # Resources
 Below are online resources I used during this project:
--Login/Logout: https://gist.github.com/mschoebel/9398202
+- Login/Logout: https://gist.github.com/mschoebel/9398202
 - Proto File Compile: https://medium.com/namely-labs/go-protocol-buffers-57b49e28bc4a
 - Golang Syntax and Basics: https://gobyexample.com/
 - Golang Mux Templates: https://github.com/meshhq/golang-html-template-tutorial
