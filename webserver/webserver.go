@@ -27,9 +27,20 @@ func getUserName(request *http.Request) (userName string) {
   return userName
 }
 
-func setSession(userName string, response http.ResponseWriter) {
+func getRole(request *http.Request) (role string) {
+  if cookie, err := request.Cookie("session"); err == nil {
+    cookieValue := make(map[string]string)
+    if err = cookieHandler.Decode("session", cookie.Value, &cookieValue); err == nil {
+      role = cookieValue["role"]
+    }
+  }
+  return role
+}
+
+func setSession(userName string, role string, response http.ResponseWriter) {
   value := map[string]string{
     "name": userName,
+    "role": role,
   }
   if encoded, err := cookieHandler.Encode("session", value); err == nil {
     cookie := &http.Cookie{
@@ -206,10 +217,10 @@ func loginHandler(response http.ResponseWriter, request *http.Request) {
     // TO-DO: This can be improved, like a database of users and credentials...
     userRole := authenticateUser(name, pass)
     if userRole == "user" {
-      setSession(name, response)
+      setSession(name, userRole, response)
       redirectTarget = "/userPanel"
     } else if userRole == "admin" {
-      setSession(name, response)
+      setSession(name, userRole, response)
       redirectTarget = "/adminPanel"
     }
   }
@@ -324,7 +335,9 @@ const adminPanel = `
 
 func userPanelHandler(response http.ResponseWriter, request *http.Request) {
   userName := getUserName(request)
-  if userName != "" {
+  role := getRole(request)
+
+  if userName != "" && role == "user" {
     fmt.Fprintf(response, userPanel, userName)
   } else {
     http.Redirect(response, request, "/", 302)
@@ -333,7 +346,9 @@ func userPanelHandler(response http.ResponseWriter, request *http.Request) {
 
 func adminPanelHandler(response http.ResponseWriter, request *http.Request) {
   userName := getUserName(request)
-  if userName != "" {
+  role := getRole(request)
+
+  if userName != "" && role == "admin" {
     fmt.Fprintf(response, adminPanel, userName)
   } else {
     http.Redirect(response, request, "/", 302)
