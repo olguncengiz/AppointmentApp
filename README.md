@@ -20,6 +20,7 @@ Below are some of the obstacles I had to overcome for this task:
 - Learning about Golang project folder structure (Best Practices)
 - Understanding Mutex Concepts
 - Understanding Protocol Buffers
+- Learning about Proto3 syntax
 - Finding the right command to compile protocol buffer file: 
   + "protoc --go_out=plugins=grpc:. ./*.proto"
 
