@@ -27,6 +27,52 @@ func getUserName(request *http.Request) (userName string) {
   return userName
 }
 
+func getAppointments() (appointmentHTML string) {
+  // Appointment Table
+  var tableHTML = `
+    <table border="2">
+      <tr>
+        <td>Client Name</td>
+        <td>Date</td>
+        <td>Time</td>
+        <td>Status</td>
+      </tr>
+      %s
+    </table>
+    `
+
+  // Set up a connection to the server.
+  conn, err := grpc.Dial(address, grpc.WithInsecure())
+  if err != nil {
+    log.Fatalf("did not connect: %v", err)
+  }
+  defer conn.Close()
+  c := pb.NewAppointmentClient(conn)
+
+  // Contact the server and print out its response.
+  ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+  defer cancel()
+  r, err := c.GetAppointments(ctx, &pb.ClientInfo{Name: ""})
+  if err != nil {
+    log.Fatalf("could not get appointment: %v", err)
+  } else {
+    rows := ""
+    for _, appInfo := range r.Appointments {
+      var row = `<tr>
+        <td>%s</td>
+        <td>%s</td>
+        <td>%s</td>
+        <td>%s</td>
+      </tr>`
+
+      rows = rows + fmt.Sprintf(row, appInfo.Client.Name, appInfo.Date, appInfo.Time, appInfo.Status)
+    }
+    appointmentHTML = fmt.Sprintf(tableHTML, rows)
+  }
+
+  return appointmentHTML
+}
+
 func getRole(request *http.Request) (role string) {
   if cookie, err := request.Cookie("session"); err == nil {
     cookieValue := make(map[string]string)
@@ -272,7 +318,7 @@ func internalPageHandler(response http.ResponseWriter, request *http.Request) {
 const userPanel = `
 <h1>User Panel</h1>
 <hr>
-<small>User: %s</small>
+<h2>User: %s</h2>
 <div>
 <b>Request Appointment</b>
 <form method="post" action="/requestAppointment">
@@ -295,9 +341,13 @@ const userPanel = `
 const adminPanel = `
 <h1>Admin Panel</h1>
 <hr>
-<small>User: %s</small>
+<h2>User: %s</h2>
 <div>
-<b>Delete Appointment</b>
+<h3>appointments:</h3>
+%s
+</div>
+<div>
+<b>Decline Appointment</b>
 <form method="post" action="/deleteAppointment">
     <label for="username">User name</label>
     <input type="text" id="username" name="username">
@@ -349,7 +399,9 @@ func adminPanelHandler(response http.ResponseWriter, request *http.Request) {
   role := getRole(request)
 
   if userName != "" && role == "admin" {
-    fmt.Fprintf(response, adminPanel, userName)
+    appointmentsTable := getAppointments()
+
+    fmt.Fprintf(response, adminPanel, userName, appointmentsTable)
   } else {
     http.Redirect(response, request, "/", 302)
   }
