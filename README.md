@@ -42,6 +42,7 @@ Below are the problems I faced during this project:
 - Lost too much time on "protoc" tool error (Couldn't find the .exe file to compile the protocol buffer files)
 - Working with pointers and pointer syntax (* and &) after a long time (since university) is a little confusing
 - Cross-browser usage can mess the date and time since they are stored as strings
+- Struggling with static files and HTML templates took too much time, so the web server generates the HTML files from code for now
 
 # Future Improvements
 Due to time limitations, below improvement points are left untouched. But these can be considered in future releases:

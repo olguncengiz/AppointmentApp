@@ -30,12 +30,12 @@ func getUserName(request *http.Request) (userName string) {
 func getAppointments() (appointmentHTML string) {
   // Appointment Table
   var tableHTML = `
-    <table border="2">
+    <table id="appointments">
       <tr>
-        <td>Client Name</td>
-        <td>Date</td>
-        <td>Time</td>
-        <td>Status</td>
+        <th>Client Name</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
       </tr>
       %s
     </table>
@@ -281,6 +281,12 @@ func logoutHandler(response http.ResponseWriter, request *http.Request) {
 
 // Index Page
 const indexPage = `
+<html>
+<head>
+<base href="/">
+<link rel="stylesheet" type="text/css" href="/static/style.css">
+</head>
+<body>
 <h1>Login</h1>
 <form method="post" action="/login">
     <label for="username">User name</label>
@@ -289,33 +295,22 @@ const indexPage = `
     <input type="password" id="password" name="password">
     <button type="submit">Login</button>
 </form>
+</body>
+</html>
 `
 
 func indexPageHandler(response http.ResponseWriter, request *http.Request) {
   fmt.Fprintf(response, indexPage)
 }
 
-// Internal Page
-const internalPage = `
-<h1>Internal</h1>
-<hr>
-<small>User: %s</small>
-<form method="post" action="/logout">
-    <button type="submit">Logout</button>
-</form>
-`
-
-func internalPageHandler(response http.ResponseWriter, request *http.Request) {
-  userName := getUserName(request)
-  if userName != "" {
-    fmt.Fprintf(response, internalPage, userName)
-  } else {
-    http.Redirect(response, request, "/", 302)
-  }
-}
-
 // User Panel
 const userPanel = `
+<html>
+<head>
+<base href="/">
+<link rel="stylesheet" type="text/css" href="/static/style.css">
+</head>
+<body>
 <h1>User Panel</h1>
 <hr>
 <h2>User: %s</h2>
@@ -335,10 +330,18 @@ const userPanel = `
 <form method="post" action="/logout">
     <button type="submit">Logout</button>
 </form>
+</body>
+</html>
 `
 
 // Admin Panel
 const adminPanel = `
+<html>
+<head>
+<base href="/">
+<link rel="stylesheet" type="text/css" href="/static/style.css">
+</head>
+<body>
 <h1>Admin Panel</h1>
 <hr>
 <h2>User: %s</h2>
@@ -365,7 +368,6 @@ const adminPanel = `
 </div>
 <br>
 <div>
-<div>
 <b>Move Appointment</b>
 <form method="post" action="/moveAppointment">
     <label for="username">User name</label>
@@ -381,6 +383,8 @@ const adminPanel = `
 <form method="post" action="/logout">
     <button type="submit">Logout</button>
 </form>
+</body>
+</html>
 `
 
 func userPanelHandler(response http.ResponseWriter, request *http.Request) {
@@ -413,9 +417,9 @@ var router = mux.NewRouter()
 func main() {
 
   router.HandleFunc("/", indexPageHandler)
-  router.HandleFunc("/internal", internalPageHandler)
   router.HandleFunc("/userPanel", userPanelHandler)
   router.HandleFunc("/adminPanel", adminPanelHandler)
+  router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 
   router.HandleFunc("/login", loginHandler).Methods("POST")
   router.HandleFunc("/logout", logoutHandler).Methods("POST")

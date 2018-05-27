@@ -1,0 +1,34 @@
+h1 {
+	text-align: center;
+}
+
+h2, h3, h4, h5 {
+    text-align: left;
+}
+
+table, td, tr {
+	border: 2px solid #ddd;
+}
+
+#appointments {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#appointments td, #appointments th {
+    border: 2px solid #ddd;
+    padding: 8px;
+}
+
+#appointments tr:nth-child(even){background-color: #f2f2f2;}
+
+#appointments tr:hover {background-color: #ddd;}
+
+#appointments th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: blue;
+    color: white;
+}
