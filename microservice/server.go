@@ -47,10 +47,31 @@ func (s *server) RequestAppointment(ctx context.Context, in *pb.AppointmentReq) 
 
 // GetAppointments implements appointment.GetAppointments
 func (s *server) GetAppointments(ctx context.Context, in *pb.ClientInfo) (*pb.AppointmentList, error) {
-	client := &pb.ClientInfo{Name: "a"}
-	appInfo := &pb.AppointmentInfo{Client: client, Date: "b", Time: "c", Status: "d"}
-	appList := []*pb.AppointmentInfo{appInfo}
-	return &pb.AppointmentList{Appointments: appList}, nil
+	clientName := in.Name
+
+	if clientName != "" { // Appointment for a client
+		mutex.Lock()
+		appInfo, chk := appointmentDb[clientName]
+		mutex.Unlock()
+
+		if chk {
+			appList := []*pb.AppointmentInfo{&appInfo}
+			log.Printf("DB: %s", appointmentDb)
+			return &pb.AppointmentList{Appointments: appList}, nil
+		} else {
+			log.Printf("DB: %s", appointmentDb)
+			return &pb.AppointmentList{Appointments: nil}, nil
+		}
+	} else { // All appointments
+		// Convert map to slice of values.
+	    appointments := []*pb.AppointmentInfo{}
+	    for _, value := range appointmentDb {
+	    	var appInfo pb.AppointmentInfo = value
+	        appointments = append(appointments, &appInfo)
+	    }
+		log.Printf("DB: %s", appointmentDb)
+		return &pb.AppointmentList{Appointments: appointments}, nil
+	}
 }
 
 // MoveAppointment implements appointment.MoveAppointment

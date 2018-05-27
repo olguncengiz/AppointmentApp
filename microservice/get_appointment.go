@@ -12,7 +12,7 @@ import (
 
 const (
 	address     = "localhost:50888"
-	defaultName = "all"
+	defaultName = ""
 )
 
 func main() {
