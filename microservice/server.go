@@ -47,7 +47,8 @@ func (s *server) RequestAppointment(ctx context.Context, in *pb.AppointmentReq) 
 
 // GetAppointments implements appointment.GetAppointments
 func (s *server) GetAppointments(ctx context.Context, in *pb.ClientInfo) (*pb.AppointmentList, error) {
-	appInfo := &pb.AppointmentInfo{Client: nil, Date: "a", Time: "b", Status: "c"}
+	client := &pb.ClientInfo{Name: "a"}
+	appInfo := &pb.AppointmentInfo{Client: client, Date: "b", Time: "c", Status: "d"}
 	appList := []*pb.AppointmentInfo{appInfo}
 	return &pb.AppointmentList{Appointments: appList}, nil
 }
