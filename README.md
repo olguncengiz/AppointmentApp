@@ -10,20 +10,22 @@ JS Web Client -> Golang webserver -> Golang gRPC Microservice
 
 # Usage
 - Start Golang gRPC server by executing these commands under "/microservice" folder: (Windows commands)
-$ go build
-$ server.exe
+	
+	$ go build
+	$ server.exe
 
-or 
+	or 
 
-$ go run server.go
+	$ go run server.go
 
 - Start Golang web server by executing these commands under "/webserver" folder: (Windows commands)
-$ go build
-$ webserver.exe
+	
+	$ go build
+	$ webserver.exe
 
-or
+	or
 
-$ go run webserver.go
+	$ go run webserver.go
 
 - Open a browser and go to "http://localhost:8080"
 - Login using username/password pairs below:
