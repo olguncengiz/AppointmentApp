@@ -8,6 +8,33 @@ JS Web Client -> Golang webserver -> Golang gRPC Microservice
 
 ![Overall Architecture](https://raw.githubusercontent.com/olguncengiz/AppointmentApp/master/Architecture.png)
 
+# Usage
+- Start Golang gRPC server by executing these commands under "/microservice" folder: (Windows commands)
+$ go build
+$ server.exe
+
+or 
+
+$ go run server.go
+
+- Start Golang web server by executing these commands under "/webserver" folder: (Windows commands)
+$ go build
+$ webserver.exe
+
+or
+
+$ go run webserver.go
+
+- Open a browser and go to "http://localhost:8080"
+- Login using username/password pairs below:
+	* user1/user
+	* user2/user
+- Create an appointment request by filling the format
+- Logout
+- Login using username/password pair below:
+	* admin/admin
+- Decline, move or approve the appointment request
+
 # Assumptions
 - User registration will be ignored.
 - Initially, there will be 2 users and 1 admin account in the system:
