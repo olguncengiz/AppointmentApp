@@ -20,22 +20,27 @@ type server struct{}
 
 //var globalName []pb.AppointmentInfo = make([]pb.AppointmentInfo, 0)
 var mutex = &sync.Mutex{}
-var appointmentDb = make(map[string]pb.AppointmentInfo)
+var appointmentDb = make(map[string]appointmentStruct)
+type appointmentStruct struct {
+	sync.Mutex
+	appointmentInfo pb.AppointmentInfo	
+}
 
 // RequestAppointment implements appointment.RequestAppointment
 func (s *server) RequestAppointment(ctx context.Context, in *pb.AppointmentReq) (*pb.AppointmentRep, error) {
 	clientName := in.AppInfo.Client.Name
 
 	mutex.Lock()
-	appInfo, chk := appointmentDb[clientName]
+	appStruct, chk := appointmentDb[clientName]
 	mutex.Unlock()
 
-	if !chk || appInfo.Status != "a" {
-		mutex.Lock()
+	if !chk || appStruct.appointmentInfo.Status != "a" {
+		as := &appointmentStruct{appointmentInfo: *in.AppInfo}
+		appStruct.Lock()
 		// This value can be increased to see mutex is working well
 		time.Sleep(time.Millisecond)
-		appointmentDb[clientName] = *in.AppInfo
-		mutex.Unlock()
+		appointmentDb[clientName] = *as
+		appStruct.Unlock()
 		
 		log.Printf("DB: %s", appointmentDb)
 
@@ -51,11 +56,11 @@ func (s *server) GetAppointments(ctx context.Context, in *pb.ClientInfo) (*pb.Ap
 
 	if clientName != "" { // Appointment for a client
 		mutex.Lock()
-		appInfo, chk := appointmentDb[clientName]
+		appStruct, chk := appointmentDb[clientName]
 		mutex.Unlock()
 
 		if chk {
-			appList := []*pb.AppointmentInfo{&appInfo}
+			appList := []*pb.AppointmentInfo{&appStruct.appointmentInfo}
 			log.Printf("DB: %s", appointmentDb)
 			return &pb.AppointmentList{Appointments: appList}, nil
 		} else {
@@ -66,7 +71,7 @@ func (s *server) GetAppointments(ctx context.Context, in *pb.ClientInfo) (*pb.Ap
 		// Convert map to slice of values.
 	    appointments := []*pb.AppointmentInfo{}
 	    for _, value := range appointmentDb {
-	    	var appInfo pb.AppointmentInfo = value
+	    	var appInfo pb.AppointmentInfo = value.appointmentInfo
 	        appointments = append(appointments, &appInfo)
 	    }
 		log.Printf("DB: %s", appointmentDb)
@@ -79,16 +84,16 @@ func (s *server) MoveAppointment(ctx context.Context, in *pb.AppointmentReq) (*p
 	clientName := in.AppInfo.Client.Name
 
 	mutex.Lock()
-	_, chk := appointmentDb[clientName]
+	appStruct, chk := appointmentDb[clientName]
 	mutex.Unlock()
 
-	if chk {		
+	if chk {
+		as := &appointmentStruct{appointmentInfo: *in.AppInfo}
+		appStruct.Lock()
 		// This value can be increased to see mutex is working well
 		time.Sleep(time.Millisecond)
-
-		mutex.Lock()
-		appointmentDb[clientName] = *in.AppInfo
-		mutex.Unlock()
+		appointmentDb[clientName] = *as
+		appStruct.Unlock()
 		
 		log.Printf("DB: %s", appointmentDb)
 
@@ -107,11 +112,11 @@ func (s *server) DeleteAppointment(ctx context.Context, in *pb.ClientInfo) (*pb.
 	mutex.Unlock()
 
 	if chk {
-		mutex.Lock()
+		//appStruct.Lock()
 		// This value can be increased to see mutex is working well
 		time.Sleep(time.Millisecond)
 		delete(appointmentDb, clientName)
-		mutex.Unlock()
+		//appStruct.Unlock()
 		
 		log.Printf("DB: %s", appointmentDb)
 
@@ -126,18 +131,17 @@ func (s *server) ApproveAppointment(ctx context.Context, in *pb.ClientInfo) (*pb
 	clientName := in.Name
 
 	mutex.Lock()
-	appInfo, chk := appointmentDb[clientName]
+	appStruct, chk := appointmentDb[clientName]
 	mutex.Unlock()
 
 	if chk {		
 		// This value can be increased to see mutex is working well
 		time.Sleep(time.Millisecond)
+		appStruct.appointmentInfo.Status = "a"
 
-		appInfo.Status = "a"
-
-		mutex.Lock()
-		appointmentDb[clientName] = appInfo
-		mutex.Unlock()
+		appStruct.Lock()
+		appointmentDb[clientName] = appStruct
+		appStruct.Unlock()
 		
 		log.Printf("DB: %s", appointmentDb)
 
