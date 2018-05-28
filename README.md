@@ -6,6 +6,8 @@ The overall architecture of this application is defined as below:
 
 JS Web Client -> Golang webserver -> Golang gRPC Microservice
 
+![Overall Architecture](https://raw.githubusercontent.com/olguncengiz/AppointmentApp/master/Architecture.png)
+
 # Assumptions
 - User registration will be ignored.
 - Initially, there will be 2 users and 1 admin account in the system:
