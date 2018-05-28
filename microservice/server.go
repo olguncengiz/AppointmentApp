@@ -34,19 +34,32 @@ func (s *server) RequestAppointment(ctx context.Context, in *pb.AppointmentReq) 
 	appStruct, chk := appointmentDb[clientName]
 	mutex.Unlock()
 
-	if !chk || appStruct.appointmentInfo.Status != "a" {
+	if chk && appStruct.appointmentInfo.Status != "a"{
 		as := &appointmentStruct{appointmentInfo: *in.AppInfo}
 		appStruct.Lock()
 		// This value can be increased to see mutex is working well
 		time.Sleep(time.Millisecond)
+		//mutex.Lock()
 		appointmentDb[clientName] = *as
+		//mutex.Unlock()
 		appStruct.Unlock()
 		
 		log.Printf("DB: %s", appointmentDb)
 
 		return &pb.AppointmentRep{Message: "Appointment Request Received From " + clientName}, nil
+	} else if !chk {
+		as := &appointmentStruct{appointmentInfo: *in.AppInfo}
+		mutex.Lock()
+		// This value can be increased to see mutex is working well
+		time.Sleep(time.Millisecond)
+		appointmentDb[clientName] = *as
+		mutex.Unlock()
+		
+		log.Printf("DB: %s", appointmentDb)
+
+		return &pb.AppointmentRep{Message: "Appointment Request Received From " + clientName}, nil
 	} else {
-		return &pb.AppointmentRep{Message: clientName + " Already Has An Appointment"}, nil
+		return &pb.AppointmentRep{Message: "Can't Request An Appointment For " + clientName}, nil
 	}
 }
 
